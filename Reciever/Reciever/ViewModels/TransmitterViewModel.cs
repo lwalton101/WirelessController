@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Threading;
 using WebSocketSharp;
 
 namespace Reciever.ViewModels
@@ -26,10 +27,6 @@ namespace Reciever.ViewModels
         }
         public TransmitterViewModel() { 
             this.Transmitters = new ObservableCollection<Transmitter>();
-            Transmitters.Add(new Transmitter() { ID = "numero uno" });
-            Transmitters.Add(new Transmitter() { ID = "numero 2" });
-            Transmitters.Add(new Transmitter() { ID = "numero drei" });
-            Transmitters.Add(new Transmitter() { ID = "numero catre" });
 
             InitialiseWebsockets();
         }
@@ -54,7 +51,33 @@ namespace Reciever.ViewModels
 
 			_ws.OnMessage += (sender, e) =>
             {
-                Console.WriteLine(e.Data);
+                System.Diagnostics.Debug.WriteLine(e.Data);
+                var message = e.Data.Split(";");
+                var messageID = message[0];
+
+                if(messageID == "0")
+                {
+					App.Current.Dispatcher.Invoke(() =>
+                    {
+                        Transmitters.Add(new Transmitter { ID = message[1] });
+                    });
+                } 
+                else if(messageID == "1")
+                {
+                    var toRemove = Transmitters.Where(t => t.ID == message[1]).First();
+                    if(toRemove != null)
+                    {
+						App.Current.Dispatcher.Invoke(() =>
+						{
+							Transmitters.Remove(toRemove);
+					    });
+					}
+                    //TODO: null check here
+                }
+                else
+                {
+                    MessageBox.Show($"Didn't recognise message with id {messageID}");
+                }
             };
 
 			_ws.Connect();
