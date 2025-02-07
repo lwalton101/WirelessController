@@ -1,9 +1,14 @@
-export class ControllerSocket extends WebSocket{
+export class ControllerSocket{
     private isTransmitter: boolean = false;
     private isReciever: boolean = false;
     private hasIdentified: boolean = false;
+    public socket: WebSocket;
+
+    constructor(socket: WebSocket) {
+        this.socket = socket;
+    }
     
-    IsTransmitter(): boolean{
+    public IsTransmitter(): boolean{
         return this.isTransmitter;
     }
 
