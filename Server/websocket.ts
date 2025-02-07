@@ -15,7 +15,7 @@ export function handler(_req: Request): Response {
       console.log("a client connected!");
     });
 
-    socket.addEventListener("close", (ev) => {
+    socket.addEventListener("close", () => {
         const index = sockets.findIndex((v => v == controllerSocket))
         sockets.splice(index, 1);
         console.log(sockets)
