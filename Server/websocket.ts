@@ -13,24 +13,31 @@ export function handler(_req: Request): Response {
     
     socket.addEventListener("open", () => {
         sockets.push(controllerSocket);
+        console.log(`[${controllerSocket.GetID()}] Socket open`)
     });
 
     socket.addEventListener("close", () => {
         const index = sockets.findIndex((v => v == controllerSocket))
         sockets.splice(index, 1);
         console.log(sockets)
+        console.log(`[${controllerSocket.GetID()}] Socket Closed`)
+
+        if(controllerSocket.IsTransmitter()){
+            for(const receiverSocket of sockets){
+                if(receiverSocket.IsTransmitter()){
+                    continue;
+                }
+                receiverSocket.socket.send(`1;${controllerSocket.GetID()}`);
+            }
+        }
     })
   
     socket.addEventListener("message", (event) => {
         if(!controllerSocket.HasIdentified()){
             handleIdentificationMessage(controllerSocket, event.data)
-        }
-
-        if(!controllerSocket.IsReceiver()){
+        }else if(!controllerSocket.IsReceiver()){
             //handle reciever
-        }
-
-        if(!controllerSocket.IsTransmitter()){
+        }else if(!controllerSocket.IsTransmitter()){
             handleTransmitterMessage(controllerSocket, event.data)
             //handle transmitter
         }
