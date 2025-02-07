@@ -65,7 +65,7 @@ namespace Reciever.ViewModels
                 else if(messageID == "1")
                 {
                     var toRemove = Transmitters.Where(t => t.ID == message[1]).First();
-                    
+                    toRemove.Dispose();
                     if(toRemove != null)
                     {
 						App.Current.Dispatcher.Invoke(() =>

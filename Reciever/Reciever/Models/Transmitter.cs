@@ -9,7 +9,7 @@ using System.Windows;
 
 namespace Reciever.Models
 {
-	class Transmitter
+	class Transmitter : IDisposable
     {
         public string ID { get; set; }
         private IDualShock4Controller _controller;
@@ -33,5 +33,9 @@ namespace Reciever.Models
          
         }
 
+		public void Dispose()
+		{
+            _controller.Disconnect();
+        }
 	}
 }
