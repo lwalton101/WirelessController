@@ -4,6 +4,5 @@
 
 | Message ID | Name |  Description |
 |---|----|---|
-| 0 | Transmitter History | Contains transmitter data |
-| 1 | Transmitter joined  | Contains transmitter data  |
-| 2 | Transmitter closed  | Contains transmitter data |
+| 0 | Transmitter Joined | Contains transmitter data |
+| 1 | Transmitter closed  | Contains transmitter data |
