@@ -1,7 +1,7 @@
 import { ControllerSocket } from "./ControllerSocket.ts";
-import { handleIdentificationMessage } from "./message.ts";
+import { handleIdentificationMessage, handleTransmitterMessage } from "./message.ts";
 
-const sockets: ControllerSocket[] = []
+export const sockets: ControllerSocket[] = []
 
 export function handler(_req: Request): Response {
     if (_req.headers.get("upgrade") != "websocket") {
@@ -10,9 +10,9 @@ export function handler(_req: Request): Response {
   
     const { socket , response } = Deno.upgradeWebSocket(_req);
     const controllerSocket = new ControllerSocket(socket);
-    console.log(controllerSocket.IsTransmitter());
+    
     socket.addEventListener("open", () => {
-      console.log("a client connected!");
+        sockets.push(controllerSocket);
     });
 
     socket.addEventListener("close", () => {
@@ -22,9 +22,6 @@ export function handler(_req: Request): Response {
     })
   
     socket.addEventListener("message", (event) => {
-        sockets.push(controllerSocket);
-        console.log(sockets)
-
         if(!controllerSocket.HasIdentified()){
             handleIdentificationMessage(controllerSocket, event.data)
         }
@@ -34,13 +31,7 @@ export function handler(_req: Request): Response {
         }
 
         if(!controllerSocket.IsTransmitter()){
-            for(const clientSocket of sockets){
-                if(!clientSocket.IsReceiver()){
-                    continue;
-                }
-                clientSocket.socket.send(`${event.data}`)
-                
-            }
+            handleTransmitterMessage(controllerSocket, event.data)
             //handle transmitter
         }
     });
