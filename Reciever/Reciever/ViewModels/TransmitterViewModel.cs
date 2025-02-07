@@ -59,7 +59,7 @@ namespace Reciever.ViewModels
                 {
 					App.Current.Dispatcher.Invoke(() =>
                     {
-                        Transmitters.Add(new Transmitter { ID = message[1] });
+                        Transmitters.Add(new Transmitter(message[1]));
                     });
                 } 
                 else if(messageID == "1")
